@@ -4,21 +4,7 @@ import { Check, Circle } from 'lucide-react';
 import { roadmapData } from './data/roadmap';
 
 function App() {
-  const [completedFeatures, setCompletedFeatures] = useState(() => {
-    const saved = localStorage.getItem('weathergpt_completed_features');
-    return saved ? JSON.parse(saved) : {};
-  });
-
-  useEffect(() => {
-    localStorage.setItem('weathergpt_completed_features', JSON.stringify(completedFeatures));
-  }, [completedFeatures]);
-
-  const toggleFeature = (id) => {
-    setCompletedFeatures(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
+  const [completedFeatures, setCompletedFeatures] = useState({});
 
   // Calculate progress
   const allFeatures = roadmapData.flatMap(tier => tier.features);
@@ -93,7 +79,6 @@ function App() {
                     key={feature.id} 
                     feature={feature} 
                     isCompleted={!!completedFeatures[feature.id]}
-                    onToggle={() => toggleFeature(feature.id)}
                   />
                 ))}
               </div>
@@ -105,7 +90,7 @@ function App() {
   );
 }
 
-function FeatureRow({ feature, isCompleted, onToggle }) {
+function FeatureRow({ feature, isCompleted }) {
   return (
     <div 
       className={`group relative rounded-xl border p-5 md:p-6 transition-all duration-300 ease-out flex gap-4 md:gap-6
@@ -118,20 +103,18 @@ function FeatureRow({ feature, isCompleted, onToggle }) {
       `}
     >
       {/* Checkbox */}
-      <button 
-        onClick={onToggle}
-        disabled={feature.isFuture}
+      <div 
         className={`flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center transition-colors mt-0.5
           ${feature.isFuture 
-            ? 'border border-[#333] cursor-not-allowed opacity-50' 
+            ? 'border border-[#333] opacity-50' 
             : isCompleted
               ? 'bg-teal-500 text-white'
-              : 'border border-[#444] text-transparent hover:border-teal-400 group-hover:border-teal-500/50 cursor-pointer'
+              : 'border border-[#444] text-transparent'
           }
         `}
       >
         <Check size={14} className={isCompleted ? 'opacity-100' : 'opacity-0'} strokeWidth={3} />
-      </button>
+      </div>
 
       {/* Content */}
       <div className="flex-1 flex flex-col gap-3">
